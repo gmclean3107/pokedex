@@ -8,7 +8,7 @@ import (
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(commands map[string]cliCommand) error
+	callback    func(config *Config) error
 }
 
 var CommandRegistry = map[string]cliCommand{
@@ -24,17 +24,17 @@ var CommandRegistry = map[string]cliCommand{
 	},
 }
 
-func commandExit(commands map[string]cliCommand) error {
+func commandExit(config *Config) error {
 	fmt.Println("Closing the Pokedex... Goodbye!")
 	os.Exit(0)
 	return nil
 }
 
-func commandHelp(commands map[string]cliCommand) error {
+func commandHelp(config *Config) error {
 
 	fmt.Print("Welcome to the Pokedex!\nUsage:\n\n")
 
-	for _, command := range commands {
+	for _, command := range config.commandRegistry {
 		fmt.Printf("%s: %s\n", command.name, command.description)
 	}
 

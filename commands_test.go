@@ -11,7 +11,7 @@ import (
 
 func TestCommandExit(t *testing.T) {
 	if os.Getenv("TEST_EXIT") == "1" {
-		commandExit(CommandRegistry)
+		commandExit(&config)
 		return
 	}
 
@@ -47,7 +47,7 @@ func TestHelpCommand(t *testing.T) {
 	r, w, _ := os.Pipe()
 	os.Stdout = w
 
-	commandHelp(CommandRegistry)
+	commandHelp(&config)
 
 	w.Close()
 

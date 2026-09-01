@@ -1,6 +1,8 @@
 package main
 
-import "strings"
+import (
+	"strings"
+)
 
 func cleanInput(input string) []string {
 	splitString := []string{}

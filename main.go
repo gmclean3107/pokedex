@@ -17,6 +17,16 @@ func main() {
 
 		inputSlice := cleanInput(input)
 
-		fmt.Printf("Your command was: %s\n", inputSlice[0])
+		command, ok := CommandRegistry[inputSlice[0]]
+
+		if !ok {
+			fmt.Println("Unknown command")
+		} else {
+			err := command.callback(CommandRegistry)
+
+			if err != nil {
+				fmt.Println(fmt.Errorf("Error running command '%s': %v", command.name, err))
+			}
+		}
 	}
 }

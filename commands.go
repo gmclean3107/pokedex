@@ -32,7 +32,7 @@ func commandExit(commands map[string]cliCommand) error {
 
 func commandHelp(commands map[string]cliCommand) error {
 
-	fmt.Print("Welcome to Pokedex!\nUsage:\n\n")
+	fmt.Print("Welcome to the Pokedex!\nUsage:\n\n")
 
 	for _, command := range commands {
 		fmt.Printf("%s: %s\n", command.name, command.description)

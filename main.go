@@ -1,7 +1,17 @@
 package main
 
-func main() {
-	config := &Config{commandRegistry: CommandRegistry}
+import (
+	"time"
 
-	startRepl(config)
+	"github.com/gmclean3107/pokedexcli/internal/pokeapi"
+)
+
+func main() {
+	pokeClient := pokeapi.NewClient(5*time.Second, time.Minute*5)
+	cfg := &config{
+		commands:      getCommands(),
+		pokeapiClient: pokeClient,
+	}
+
+	startRepl(cfg)
 }

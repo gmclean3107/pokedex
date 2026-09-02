@@ -1,88 +1,40 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
-	"net/http"
 )
 
-type LocationAreaResponse struct {
-	Count    int            `json: "count"`
-	Next     string         `json: "next"`
-	Previous string         `json: "previous"`
-	Results  []LocationArea `json: "results"`
-}
-
-type LocationArea struct {
-	Name string `json: "name"`
-	Url  string `json: "url"`
-}
-
-func commandMap(config *Config) error {
-	var res *http.Response
-	var err error
-
-	if config.mapNext == "" {
-		res, err = http.Get("https://pokeapi.co/api/v2/location-area/")
-	} else {
-		res, err = http.Get(config.mapNext)
-	}
-
+func commandMapf(cfg *config) error {
+	locationsResp, err := cfg.pokeapiClient.ListLocations(cfg.nextLocationsURL)
 	if err != nil {
 		return err
 	}
 
-	decoder := json.NewDecoder(res.Body)
+	cfg.nextLocationsURL = locationsResp.Next
+	cfg.prevLocationsURL = locationsResp.Previous
 
-	var locationRes LocationAreaResponse
-
-	err = decoder.Decode(&locationRes)
-
-	if err != nil {
-		return err
+	for _, loc := range locationsResp.Results {
+		fmt.Println(loc.Name)
 	}
-
-	for _, result := range locationRes.Results {
-		fmt.Println(result.Name)
-	}
-
-	config.mapNext = locationRes.Next
-	config.mapPrev = locationRes.Previous
-
 	return nil
 }
 
-func commandMapB(config *Config) error {
-	var res *http.Response
-	var err error
-
-	if config.mapPrev == "" {
-		fmt.Println("you're on the first page")
-		return nil
-	} else {
-		res, err = http.Get(config.mapPrev)
+func commandMapb(cfg *config) error {
+	if cfg.prevLocationsURL == nil {
+		return errors.New("you're on the first page")
 	}
 
+	locationResp, err := cfg.pokeapiClient.ListLocations(cfg.prevLocationsURL)
 	if err != nil {
 		return err
 	}
 
-	decoder := json.NewDecoder(res.Body)
+	cfg.nextLocationsURL = locationResp.Next
+	cfg.prevLocationsURL = locationResp.Previous
 
-	var locationRes LocationAreaResponse
-
-	err = decoder.Decode(&locationRes)
-
-	if err != nil {
-		return err
+	for _, loc := range locationResp.Results {
+		fmt.Println(loc.Name)
 	}
-
-	for _, result := range locationRes.Results {
-		fmt.Println(result.Name)
-	}
-
-	config.mapPrev = locationRes.Previous
-	config.mapNext = locationRes.Next
-
 	return nil
 }
